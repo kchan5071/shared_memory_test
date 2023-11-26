@@ -1,6 +1,7 @@
 import time
 from multiprocessing import Process, Value
 import random
+from ctypes import c_bool
 
 class Counter:
     def __init__(self, start, end, increment, rand, done):
@@ -36,19 +37,25 @@ class Reader:
             inc = self.increment.value
             rd = self.rand.value
             print(f"increment = {inc}, rand = {rd}")
-            time.sleep(.5)
+            time.sleep(.1)
             self.max_iterations -= 1
 
 def main():
     start = time.perf_counter()
     
-    #create process to count to 100000
-    max = 100000
+    #create process to count to 10 million
+    max = 10000000
 
+
+    #create shared memory
     inc = Value('i', 0)
     rand = Value('i', 0)
-    done = Value('b', False)
+    done = Value(c_bool, False)
+
+    #counter object(for simplification)
     counter = Counter(0, max, inc, rand, done)
+
+    #test processes
     p1 = Process(target=counter.count)
     p2 = Process(target=counter.rand_count) 
 
